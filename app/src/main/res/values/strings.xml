@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FindFriend</string>
+
+    <string name="Google_Map_API_Key">AIzaSyAzcct5OQlLTaplSrx01XJfAyjbEQPO78I</string>
+
+    <string name="getAllLocation">http://172.16.1.131:8888/where/getalllocation.php</string>
+
+</resources>
