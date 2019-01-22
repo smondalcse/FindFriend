@@ -7,7 +7,7 @@ public class DBCode {
     SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
     SET time_zone = "+00:00";
 
-
+=====================================================
     CREATE TABLE `tbllocation` (
       `id` int(10) UNSIGNED NOT NULL,
       `user_id` varchar(50) NOT NULL,
@@ -15,7 +15,7 @@ public class DBCode {
       `lng` varchar(50) NOT NULL
     ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-
+=====================================================
 
     INSERT INTO `tbllocation` (`id`, `user_id`, `lat`, `lng`) VALUES
     (1, '20170546', '23.786534', '90.399483'),
@@ -27,6 +27,7 @@ public class DBCode {
     (7, '20140540', '23.785817', '90.383572'),
     (8, '20140540', '24.514951', '89.543884');
 
+    =========================================================
 
     CREATE TABLE `tblusers` (
       `id` int(10) UNSIGNED NOT NULL,
@@ -38,7 +39,7 @@ public class DBCode {
       `contact` varchar(25) NOT NULL
     ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-
+    =========================================================
 
     INSERT INTO `tblusers` (`id`, `user_id`, `email`, `first_name`, `last_name`, `address`, `contact`) VALUES
     (1, '20170546', 'cse.sanat@gmail.com', 'Sanat', 'Mondal', 'Mirpur-10', '01712995265'),
@@ -47,6 +48,8 @@ public class DBCode {
     (4, '20140550', 'alim@gmail.com', 'Alim', 'Uddin', '017845987', '017845987'),
     (5, '20140553', 'test@gmail.com', 'Test', 'Mr', '017845987', '017845987'),
     (6, '20140540', 'Hello@gmail.com', 'Mr', 'Hello', '017845987', '017845987');
+
+    ================================================================
 
 
     ALTER TABLE `tbllocation`

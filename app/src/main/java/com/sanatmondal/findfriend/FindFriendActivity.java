@@ -246,7 +246,7 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
             String url = "http://172.16.1.131:8888/where/image/";
             url = url + user_id + ".jpg";
             String snippet = "user_id: " + user_id + ", Name: " + user_name + ", Email: " + email + ", Contact: " + contact;
-            glide(url,  latLng,  user_id, snippet, user_name);
+            downloadImage(url,  latLng,  user_id, snippet, user_name);
 
             /*******************************/
 /*
@@ -280,7 +280,7 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
 
     }
 
-    public void glide(String url, final LatLng latLng, final String user, final String snippet, final String user_name){
+    public void downloadImage(String url, final LatLng latLng, final String user, final String snippet, final String user_name){
         Glide.with(this)
                 .asBitmap()
                 .load(url)
@@ -288,12 +288,12 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                     @Override
                     public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
 
-                        Bitmap test = createCustomMarker(FindFriendActivity.this, R.drawable.test, user);
+                        Bitmap test = createCustomMarker(FindFriendActivity.this, resource, user);
 
                         Bitmap resized = Bitmap.createScaledBitmap(resource, 70, 70, true);
                         MarkerOptions options = new MarkerOptions()
                                 //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                                .icon(BitmapDescriptorFactory.fromBitmap(test))
+                                .icon(BitmapDescriptorFactory.fromBitmap(resized))
                                 .position(latLng)
                                 .title(user_name)
                                 .snippet(snippet);
@@ -305,12 +305,12 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                 });
     }
 
-    public static Bitmap createCustomMarker(Context context, @DrawableRes int resource, String _name) {
+    public static Bitmap createCustomMarker(Context context,  Bitmap resource, String _name) {
 
         View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
 
         ImageView markerImage = (ImageView) marker.findViewById(R.id.profile_image);
-        markerImage.setImageResource(resource);
+        markerImage.setImageBitmap(resource);
 
         TextView text = (TextView) marker.findViewById(R.id.text);
         text.setText(_name);
