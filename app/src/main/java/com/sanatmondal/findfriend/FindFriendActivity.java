@@ -1,15 +1,33 @@
 package com.sanatmondal.findfriend;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -19,6 +37,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
@@ -36,6 +57,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class FindFriendActivity extends AppCompatActivity implements OnMapReadyCallback{
@@ -52,6 +78,8 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
     ArrayList<Marker> markerList = new ArrayList<>();
 
     Handler handler = new Handler();
+    ImageView mMarkerImageView;
+    View mCustomMarkerView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +101,6 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                 finish();
             }
         });
-
     }
 
     private Runnable HandlerRunable = new Runnable() {
@@ -167,7 +194,7 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                         LatLngBounds bounds = builder.build();
                         int width = getResources().getDisplayMetrics().widthPixels;
                         int height = getResources().getDisplayMetrics().heightPixels;
-                        int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+                        int padding = (int) (width * 0.15); // offset from edges of the map 10% of screen
 
                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
@@ -216,16 +243,36 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(FindFriendActivity.this));
 
         try {
+            String url = "http://172.16.1.131:8888/where/image/";
+            url = url + user_id + ".jpg";
             String snippet = "user_id: " + user_id + ", Name: " + user_name + ", Email: " + email + ", Contact: " + contact;
+            glide(url,  latLng,  user_id, snippet, user_name);
+
+            /*******************************/
+/*
+            String snippet = "user_id: " + user_id + ", Name: " + user_name + ", Email: " + email + ", Contact: " + contact;
+
+            URL url = null;
+            Bitmap bmp = null;
+            try {
+                url = new URL("http://172.16.1.131:8888/where/image/20170546.jpg");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try {
+                bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             MarkerOptions options = new MarkerOptions()
                     //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                    .icon(BitmapDescriptorFactory.fromBitmap(CreateMarkerIcon()))
+                    .icon(BitmapDescriptorFactory.fromBitmap(bmp))
                     .position(latLng)
                     .title(user_name)
                     .snippet(snippet);
             mMarker = mMap.addMarker(options);
-
+*/
            // mMarker.showInfoWindow();
         } catch (NullPointerException e) {
             Log.d(TAG, "moveCamera: NulpointerException: " + e.getMessage());
@@ -233,10 +280,73 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
 
     }
 
+    public void glide(String url, final LatLng latLng, final String user, final String snippet, final String user_name){
+        Glide.with(this)
+                .asBitmap()
+                .load(url)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+
+                    //    Bitmap test = createCustomMarker(FindFriendActivity.this, resource, user);
+
+                        Bitmap resized = Bitmap.createScaledBitmap(resource, 70, 70, true);
+                        MarkerOptions options = new MarkerOptions()
+                                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                                .icon(BitmapDescriptorFactory.fromBitmap(resized))
+                                .position(latLng)
+                                .title(user_name)
+                                .snippet(snippet);
+
+
+                        mMarker = mMap.addMarker(options);
+                      //  mMarker = mMap.addMarker(options);
+                    }
+                });
+    }
+/*
+    public static Bitmap createCustomMarker(Context context, Bitmap resource, String _name) {
+
+        View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
+
+        ImageView markerImage = (ImageView) marker.findViewById(R.id.profile_image);
+        markerImage.setImageBitmap(resource);
+
+        TextView text = (TextView) marker.findViewById(R.id.text);
+        text.setText(_name);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(52, ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(marker.getMeasuredWidth(), marker.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
+    }
+*/
     public Bitmap CreateMarkerIcon() {
         int height = 140;
         int width = 100;
         BitmapDrawable bitmapdraw = null;
+
+
+        URL url = null;
+        Bitmap bmp = null;
+        try {
+            url = new URL("http://172.16.1.131:8888/where/image/20170546.jpg");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.marker);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
