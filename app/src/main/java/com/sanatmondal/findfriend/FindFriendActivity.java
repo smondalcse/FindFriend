@@ -288,12 +288,12 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                     @Override
                     public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
 
-                    //    Bitmap test = createCustomMarker(FindFriendActivity.this, resource, user);
+                        Bitmap test = createCustomMarker(FindFriendActivity.this, R.drawable.test, user);
 
                         Bitmap resized = Bitmap.createScaledBitmap(resource, 70, 70, true);
                         MarkerOptions options = new MarkerOptions()
                                 //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                                .icon(BitmapDescriptorFactory.fromBitmap(resized))
+                                .icon(BitmapDescriptorFactory.fromBitmap(test))
                                 .position(latLng)
                                 .title(user_name)
                                 .snippet(snippet);
@@ -304,13 +304,13 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                     }
                 });
     }
-/*
-    public static Bitmap createCustomMarker(Context context, Bitmap resource, String _name) {
+
+    public static Bitmap createCustomMarker(Context context, @DrawableRes int resource, String _name) {
 
         View marker = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
 
         ImageView markerImage = (ImageView) marker.findViewById(R.id.profile_image);
-        markerImage.setImageBitmap(resource);
+        markerImage.setImageResource(resource);
 
         TextView text = (TextView) marker.findViewById(R.id.text);
         text.setText(_name);
@@ -327,7 +327,7 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
 
         return bitmap;
     }
-*/
+
     public Bitmap CreateMarkerIcon() {
         int height = 140;
         int width = 100;
