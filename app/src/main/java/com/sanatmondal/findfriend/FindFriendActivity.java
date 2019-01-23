@@ -67,6 +67,8 @@ import java.util.ArrayList;
 public class FindFriendActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private static final String TAG = "FindFriendActivity";
+
+    Context context;
     
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static final float DEFAULT_ZOOM = 14f;
@@ -288,22 +290,41 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                     @Override
                     public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
 
-                        Bitmap test = createCustomMarker(FindFriendActivity.this, resource, user);
 
-                        Bitmap resized = Bitmap.createScaledBitmap(resource, 70, 70, true);
-                        MarkerOptions options = new MarkerOptions()
-                                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                                .icon(BitmapDescriptorFactory.fromBitmap(resized))
-                                .position(latLng)
-                                .title(user_name)
-                                .snippet(snippet);
+                        View viewMarker = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                                .inflate(R.layout.view_custom_marker, null);
+                        ImageView myImage = (ImageView) viewMarker.findViewById(R.id.profile_image);
+                      //  TextView marker_user_name = (TextView) viewMarker.findViewById(R.id.marker_user_name);
+                      //  marker_user_name.setText(user_name);
+                        myImage.setImageBitmap(resource);
+                        Bitmap bmp=createDrawableFromView(FindFriendActivity.this,viewMarker);
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(latLng.latitude, latLng.longitude)).title(user_name)
+                                .snippet(snippet)
+                                .icon(BitmapDescriptorFactory.fromBitmap(bmp)));
 
-
-                        mMarker = mMap.addMarker(options);
-                      //  mMarker = mMap.addMarker(options);
                     }
                 });
     }
+
+
+    public static Bitmap createDrawableFromView(Activity context, View view) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay()
+                .getMetrics(displayMetrics);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.layout(0, 0, displayMetrics.widthPixels,
+                displayMetrics.heightPixels);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),
+                view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
+
 
     public static Bitmap createCustomMarker(Context context,  Bitmap resource, String _name) {
 

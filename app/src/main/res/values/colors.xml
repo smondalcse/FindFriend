@@ -9,4 +9,7 @@
 
     <color name="colorTripBlock">#e6abe6</color>
 
+    <color name="colormarker">#dadada</color>
+    <color name="colorblack">#000000</color>
+
 </resources>
