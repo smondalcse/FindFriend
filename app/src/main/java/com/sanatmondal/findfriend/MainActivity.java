@@ -13,7 +13,7 @@ import com.bumptech.glide.request.RequestOptions;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    Button btn_map;
+    Button btn_map, btn_sign_up;
     ImageView test;
 
     @Override
@@ -26,6 +26,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, FindFriendActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_sign_up = (Button) findViewById(R.id.btn_sign_up);
+        btn_sign_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, CreateAccountActivity.class);
                 startActivity(intent);
             }
         });
