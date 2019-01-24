@@ -290,7 +290,6 @@ public class FindFriendActivity extends AppCompatActivity implements OnMapReadyC
                     @Override
                     public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
 
-
                         View viewMarker = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                 .inflate(R.layout.view_custom_marker, null);
                         ImageView myImage = (ImageView) viewMarker.findViewById(R.id.profile_image);

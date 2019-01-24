@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".FindFriendActivity" />
-        <activity android:name=".CreateAccountActivity"></activity>
+        <activity android:name=".CreateAccountActivity" android:windowSoftInputMode="stateHidden"></activity>
+        <activity android:name=".LoginActivity" android:windowSoftInputMode="stateHidden"></activity>
     </application>
 
 </manifest>

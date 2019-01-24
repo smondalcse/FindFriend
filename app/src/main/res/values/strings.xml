@@ -5,6 +5,7 @@
 
     <string name="getAllLocation">http://172.16.1.131:8888/where/getalllocation.php</string>
 
-    <string name="createAccount">http://172.16.1.131:8888/where/createAccount.php</string>
+    <string name="createAccount">http://172.16.1.131:8888/where/signup_account.php?</string>
+
 
 </resources>

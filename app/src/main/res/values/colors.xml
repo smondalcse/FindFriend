@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#ad18d6</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
@@ -11,5 +11,10 @@
 
     <color name="colormarker">#dadada</color>
     <color name="colorblack">#000000</color>
+    <color name="lightGray">#ededed</color>
+    <color name="colorlogin">#f5f5f5</color>
+    <color name="colorapptheme">#FF3333</color>
+    <color name="colorapptheme_gradient_start">#9B47E3</color>
+    <color name="colorapptheme_gradient_end">#F16A71</color>
 
 </resources>

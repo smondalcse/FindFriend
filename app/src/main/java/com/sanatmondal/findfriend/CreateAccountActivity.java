@@ -1,20 +1,24 @@
 package com.sanatmondal.findfriend;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,12 +30,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CreateAccountActivity extends AppCompatActivity {
     private static final String TAG = "CreateAccountActivity";
 
-    EditText _input_user_name, _input_last_name, _nameText, _emailText, _passwordText;
+    EditText _input_user_name, _input_last_name, _nameText, _emailText, _passwordText, _input_contact, _address_contact;
     Button _signupButton;
     TextView _loginLink;
+
+    private ImageButton btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +51,15 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     private void initWidget() {
+
+        btnBack = (ImageButton) findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         _signupButton = (Button) findViewById(R.id.btn_signup);
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,12 +73,18 @@ public class CreateAccountActivity extends AppCompatActivity {
         _emailText = (EditText) findViewById(R.id.input_email);
         _passwordText = (EditText) findViewById(R.id.input_password);
         _input_last_name = (EditText) findViewById(R.id.input_last_name);
+        _input_contact = (EditText) findViewById(R.id.input_contact);
+        _address_contact = (EditText) findViewById(R.id.address);
+
     }
 
     private void signup() {
+
         if (!validate()) {
             onSignupFailed();
             return;
+        } else {
+            post_request();
         }
     }
 
@@ -78,7 +102,8 @@ public class CreateAccountActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
         String input_last_name = _input_last_name.getText().toString();
-
+        String input_contact = _input_contact.getText().toString();
+        String address_contact = _address_contact.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
             _nameText.setError("at least 3 characters");
@@ -101,11 +126,25 @@ public class CreateAccountActivity extends AppCompatActivity {
             _input_last_name.setError(null);
         }
 
+        if (address_contact.isEmpty() || address_contact.length() < 3) {
+            _address_contact.setError("enter a valid Address");
+            valid = false;
+        } else {
+            _address_contact.setError(null);
+        }
+
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("enter a valid email address");
             valid = false;
         } else {
             _emailText.setError(null);
+        }
+
+        if (input_contact.isEmpty() || input_contact.length() < 3) {
+            _input_contact.setError("enter a valid contact");
+            valid = false;
+        } else {
+            _input_contact.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
@@ -121,6 +160,11 @@ public class CreateAccountActivity extends AppCompatActivity {
     private void createAccount() {
 
         String SendURL = getResources().getString(R.string.createAccount);
+
+        SendURL = SendURL + "username=" + _nameText.getText().toString().trim() + "&email=" + _emailText.getText().toString().trim() +
+                "&firstname=" + _nameText.getText().toString().trim() + "&lastname=" + _input_last_name.getText().toString().trim() +
+                "&contact=" + _input_contact.getText().toString().trim() + "&address=" + _address_contact.getText().toString().trim() +
+                "&lat=" + "23.779392" + "&lng=" + "90.432743";
 
         Log.d(TAG, "SendURL: " + SendURL);
 
@@ -165,5 +209,46 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         mRequestQueue.add(jsonObjReq);
 
+    }
+
+    private void post_request(){
+        String SendURL = getResources().getString(R.string.createAccount);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest postRequest = new StringRequest(Request.Method.POST, SendURL,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.d("Response", response);
+                        Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.d("Error.Response", error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("username", _nameText.getText().toString().trim());
+                params.put("email", _emailText.getText().toString().trim());
+                params.put("firstname", _nameText.getText().toString().trim());
+                params.put("lastname", _input_last_name.getText().toString().trim());
+                params.put("contact", _input_contact.getText().toString().trim());
+                params.put("address", _address_contact.getText().toString().trim());
+                params.put("lat", "23.779392");
+                params.put("lng", "90.432743");
+                return params;
+            }
+        };
+        mRequestQueue.add(postRequest);
     }
 }
